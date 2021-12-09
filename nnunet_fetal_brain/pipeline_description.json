@@ -1,0 +1,15 @@
+{
+    "Name": "fetalbrain-bidsapp - Brain masking app using Unet for fetal bold mri",
+    "BIDSVersion": "1.4.0",
+    "DatasetType": "derivative",
+    "GeneratedBy": [
+        {
+            "Name": "fetalbrain_bidsapp",
+            "Version": "0.1.0",
+            "CodeURL": "https://github.com/khanlab/fetalbrain-bidsapp",
+            "Author": "Ali Khan",
+            "AuthorEmail": "ali.khan@uwo.ca"
+ 
+        }
+    ]
+}
