@@ -28,6 +28,8 @@ wildcard_constraints:  **snakebids.get_wildcard_constraints(\
 
 model = config['use_downloaded']
 
+localrules: download_model
+
 rule all:
     input:
         nii = expand(bids(root='results', datatype='func',
@@ -100,12 +102,12 @@ rule run_inference:
                     bids(root='results', datatype='func',
                         desc='brain', suffix='mask',
                         **config['input_wildcards']['bold']))
-    threads: 4
+    threads: 8
     resources:
-        mem_mb = 16000,
+        mem_mb = 32000,
         time = 30,
+        augmentation_threads = 4,
     group: 'subj'
-    log: bids(root='logs',**config['input_wildcards']['bold'],suffix='nnunet.txt')
     shadow: 'minimal'
     params:
         temp_img = 'tempimg/temp_0000.nii.gz',
@@ -115,15 +117,15 @@ rule run_inference:
         out_folder = 'templbl',
         chkpnt = config['download_model'][model]['checkpoint'],
         unettask = config['download_model'][model]['unettask'],
- 
-    shell: 'mkdir -p {params.model_dir} {params.in_folder} {params.out_folder} && ' #create temp folders
-           'cp -v {input.nii_dir}/* {params.in_folder} && ' #cp input image to temp folder
+    container: '/project/6050199/akhanf/singularity/bids-apps/khanlab_hippunfold_v0.5.1.sif'
+    shell: 'mkdir -p {params.model_dir} {params.in_folder} {params.out_folder} {output.nii_dir} && ' #create temp folders
+           'cp -v {input.nii_dir}/*.nii.gz {params.in_folder} && ' #cp input image to temp folder
            'tar -xvf {input.model_tar} -C {params.model_dir} && ' #extract model
            'export RESULTS_FOLDER={params.model_dir} && ' #set nnunet env var to point to model
-           'export nnUNet_n_proc_DA={threads} && ' #set threads
+           'export nnUNet_n_proc_DA={resources.augmentation_threads} && ' #set threads
            'nnUNet_predict -i {params.in_folder} -o {params.out_folder} '
            ' -t {params.unettask} -chk {params.chkpnt} && ' # run inference
-           'cp -v {params.out_folder} {output.nii_dir}' #copy from temp output folder to final output
+           'cp -v {params.out_folder}/*.nii.gz {output.nii_dir}' #copy from temp output folder to final output
 
 
 
@@ -138,6 +140,7 @@ rule merge_mask:
                   **config['input_wildcards']['bold'])
     group: 'subj'
     log: bids(root='logs',**config['input_wildcards']['bold'],suffix='merge.txt')
+    container: '/project/6050199/akhanf/singularity/bids-apps/khanlab_neuroglia-core_latest.sif'
     shell: 
         'fslmerge -t {output} {input}/*.nii.gz'
 
