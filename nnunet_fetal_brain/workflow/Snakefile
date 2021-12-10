@@ -64,7 +64,7 @@ rule cleanorient_mask:
                   desc='cleanorient', suffix='mask.nii.gz',
                   **config['input_wildcards']['mask'])
     shell: 
-        'c4d {input} -o {output} && fslorient -deleteorient {output}'
+        'c4d {input} -foreach -binarize -endfor -o {output} && fslorient -deleteorient {output}'
 
 
 
