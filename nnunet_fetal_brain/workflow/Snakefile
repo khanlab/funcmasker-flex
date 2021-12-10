@@ -127,7 +127,7 @@ checkpoint cp_training_img:
            'done'
 
 
-rule cp_training_lbl:
+checkpoint cp_training_lbl:
     input: 
         split_dirs = expand(bids(root='results', datatype='func',
                       desc='cleanorient', suffix='mask',
@@ -148,15 +148,15 @@ def get_training_imgs(wildcards):
     checkpoint_output = checkpoints.cp_training_img.get(**wildcards).output[0]
 
     img_path = os.path.join(checkpoint_output,'{image}')
-    return  expand(img_path,
-            image=glob_wildcards(img_path).image)
+    return  sorted(expand(img_path,
+            image=glob_wildcards(img_path).image))
 
 def get_training_lbls(wildcards):
-    rule_output = rules.cp_training_lbl.output[0]
+    checkpoint_output = checkpoints.cp_training_lbl.get(**wildcards).output[0]
 
-    img_path = os.path.join(rule_output,'{image}')
-    return  expand(img_path,
-            image=glob_wildcards(img_path).image)
+    img_path = os.path.join(checkpoint_output,'{image}')
+    return  sorted(expand(img_path,
+            image=glob_wildcards(img_path).image))
 
 
 
