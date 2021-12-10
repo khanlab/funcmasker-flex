@@ -168,7 +168,7 @@ rule create_dataset_json:
     input: 
         training_imgs = get_training_imgs,
         training_lbls = get_training_lbls,
-        template_json = '../resources/template.json'
+        template_json = os.path.join(config['snakemake_dir'],'resources/template.json')
     params:
         training_imgs_nosuffix = get_training_imgs_nosuffix
     output: 
