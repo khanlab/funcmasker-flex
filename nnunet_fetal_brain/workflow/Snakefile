@@ -1,5 +1,6 @@
 #---- begin snakebids boilerplate ----------------------------------------------
 
+from glob import glob
 import snakebids
 from snakebids import bids
 
@@ -34,10 +35,6 @@ wildcard_constraints:  **snakebids.get_wildcard_constraints(\
 #---- end snakebids boilerplate ------------------------------------------------
 
 model = config['use_downloaded']
-
-#with open(os.path.join('../',config['train_subjects_txt'])) as f:
-#    train_subjects = [ line[:-1] for line in f]
-#print(train_subjects)        
 
 
 
@@ -86,7 +83,10 @@ rule split_cleanorient_bold:
     shell: 
         #split, then replace suffix with _0000.nii.gz 
         'mkdir -p {output} && fslsplit {input}  {output}/{params.img_prefix} && '
-        'for im in `ls {output}/*.nii.gz`; do mv $im ${{im%%.nii.gz}}_0000.nii.gz; done'
+        'for im in `ls {output}/*.nii.gz`; do '
+        'c3d $im -pad-to 96x96x37 -o ${{im%%.nii.gz}}_0000.nii.gz &&  rm -f $im; '  #need to pad to 96x96x37 as some datasets in rutherford have incorrect cropping..
+        'fslorient -deleteorient ${{im%%.nii.gz}}_0000.nii.gz ; '
+        'done'
 
 
 rule split_cleanorient_mask:
@@ -105,6 +105,8 @@ rule split_cleanorient_mask:
     container: '/project/6050199/akhanf/singularity/bids-apps/khanlab_neuroglia-core_latest.sif'
     group: 'subj'
     shell: 'mkdir -p {output} && fslsplit {input}  {output}/{params.img_prefix}'
+
+
 
 
 
@@ -146,17 +148,11 @@ checkpoint cp_training_lbl:
 
 def get_training_imgs(wildcards):
     checkpoint_output = checkpoints.cp_training_img.get(**wildcards).output[0]
-
-    img_path = os.path.join(checkpoint_output,'{image}')
-    return  sorted(expand(img_path,
-            image=glob_wildcards(img_path).image))
+    return sorted(glob(os.path.join(checkpoint_output,'*.nii.gz')))
 
 def get_training_lbls(wildcards):
     checkpoint_output = checkpoints.cp_training_lbl.get(**wildcards).output[0]
-
-    img_path = os.path.join(checkpoint_output,'{image}')
-    return  sorted(expand(img_path,
-            image=glob_wildcards(img_path).image))
+    return sorted(glob(os.path.join(checkpoint_output,'*.nii.gz')))
 
 
 
@@ -200,6 +196,7 @@ rule plan_preprocess:
     resources:
         threads = 8,
         mem_mb = 16000
+    container: '/project/6050199/akhanf/singularity/bids-apps/khanlab_hippunfold_v0.5.1.sif'
     shell:
         '{params.nnunet_env_cmd} && '
         'nnUNet_plan_and_preprocess  -t {params.task_num} --verify_dataset_integrity'
@@ -240,6 +237,7 @@ rule train_fold:
         mem_mb = 64000,
         time = 1440,
     group: 'train'
+    container: '/project/6050199/akhanf/singularity/bids-apps/khanlab_hippunfold_v0.5.1.sif'
     shell:
         '{params.nnunet_env_cmd} && '
         '{params.rsync_to_tmp} && '

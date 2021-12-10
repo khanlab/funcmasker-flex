@@ -132,12 +132,12 @@ download_model:
     unettask: 'Task104_fetal_brain_bold_trainRutherford'
 
 nnunet_env:
-  nnUNet_raw_data_base: 'raw_data'
+  nnUNet_raw_data_base: 'results'
   nnUNet_preprocessed: 'preprocessed'
   RESULTS_FOLDER: 'resources/trained_models'
 
 nnunet_env_tmp:
-  nnUNet_raw_data_base: 'raw_data'
+  nnUNet_raw_data_base: 'results'
   nnUNet_preprocessed: '$SLURM_TMPDIR/preprocessed'
   RESULTS_FOLDER: 'resources/trained_models'
 
