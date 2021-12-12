@@ -128,7 +128,7 @@ download_model:
       - S9
       - S10
   trainRutherford:
-    url: ''
+    url: 'https://www.dropbox.com/s/xx3il3bgm1p9fbh/trained_model.3d_fullres.Task104_fetal_brain_bold_trainRutherford.nnUNetTrainerV2.model_best.tar'
     tar: 'trained_model.3d_fullres.Task104_fetal_brain_bold_trainRutherford.nnUNetTrainerV2.model_best.tar'
     out: 'nnUNet/3d_fullres/Task104_fetal_brain_bold_trainRutherford/nnUNetTrainerV2__nnUNetPlansv2.1/fold_{fold}/model_best.model'
     checkpoint: 'model_best'
