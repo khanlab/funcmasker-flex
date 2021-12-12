@@ -37,6 +37,8 @@ wildcard_constraints:  **snakebids.get_wildcard_constraints(\
 model = config['use_downloaded']
 
 
+include: 'rules/common.smk'
+
 
 
 if config['analysis_level'] == 'participant':
