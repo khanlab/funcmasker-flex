@@ -6,13 +6,6 @@ from snakebids import bids
 
 configfile: 'config/snakebids.yml'
 
-if config['analysis_level'] == 'train':
-    participant_label=config['train_subjects']
-else:
-    participant_label=config['participant_label']
-    del config['pybids_inputs']['mask']
-
-print(config['pybids_inputs'])
 
 #writes inputs_config.yml and updates config dict
 config.update(
@@ -20,7 +13,7 @@ config.update(
         bids_dir=config["bids_dir"],
         pybids_inputs=config["pybids_inputs"],
         derivatives=config["derivatives"],
-        participant_label=participant_label,
+        participant_label=config['participant_label'],
         exclude_participant_label=config["exclude_participant_label"]
     )
 )
