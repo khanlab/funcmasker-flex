@@ -1,0 +1,51 @@
+[tool.poetry]
+name = "funcmasker-flex"
+version = "0.1.0"
+description = ""
+authors = ["Ali Khan <alik@robarts.ca>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = ">=3.8,<3.11"
+snakebids = "0.4.0"
+batchgenerators = "0.21"
+nnunet-inference-on-cpu-and-gpu = "1.6.6"
+snakemake = "^6.12.3"
+
+[tool.poetry.dev-dependencies]
+flake8 = "^4.0.1"
+pytest-console-scripts = "^1.2.1"
+pytest = "^6.2.5"
+black = "^21.10b0"
+pylint = "^2.11.1"
+isort = "^5.10.1"
+poethepoet = "^0.10.0"
+snakefmt = "^0.4.4"
+
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+
+[tool.poe.tasks]
+quality_check = { shell = "isort funcmasker_flex -c && black funcmasker_flex --check && flake8 funcmasker_flex && pylint funcmasker_flex && snakefmt . --check" }
+quality_fix = { shell = "isort funcmasker_flex && black funcmasker_flex  && flake8 funcmasker_flex && pylint funcmasker_flex && snakefmt ." }
+test = "pytest"
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+
+[tool.pylint.master]
+ignore-patterns = "^[0-9][0-9]+_,^test_"
+
+[tool.pylint.format]
+good-names = "i,j,k,ex,_,x,y,f,d"
+
+[tool.pylint.messages_control]
+disable = """
+    missing-function-docstring,
+    missing-module-docstring,
+    fixme
+"""
