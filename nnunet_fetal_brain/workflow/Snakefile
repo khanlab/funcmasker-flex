@@ -1,9 +1,11 @@
 #---- begin snakebids boilerplate ----------------------------------------------
 
+from glob import glob
 import snakebids
 from snakebids import bids
 
 configfile: 'config/snakebids.yml'
+
 
 #writes inputs_config.yml and updates config dict
 config.update(
@@ -11,7 +13,7 @@ config.update(
         bids_dir=config["bids_dir"],
         pybids_inputs=config["pybids_inputs"],
         derivatives=config["derivatives"],
-        participant_label=config["participant_label"],
+        participant_label=config['participant_label'],
         exclude_participant_label=config["exclude_participant_label"]
     )
 )
@@ -25,123 +27,51 @@ wildcard_constraints:  **snakebids.get_wildcard_constraints(\
 
 #---- end snakebids boilerplate ------------------------------------------------
 
-
 model = config['use_downloaded']
 
-localrules: download_model
 
-rule all:
-    input:
-        nii = expand(bids(root='results', datatype='func',
-                  desc='brain', suffix='mask.nii.gz',
-                  **config['input_wildcards']['bold']),
-                        zip,
-                        **config['input_zip_lists']['bold'])
+include: 'rules/common.smk'
 
 
 
-rule split:
-    input: config['input_path']['bold']
-    output: 
-        split_dir = directory(bids(root='results', datatype='func',
-                  desc='split', suffix='bold',
-                  **config['input_wildcards']['bold']))
-    container: '/project/6050199/akhanf/singularity/bids-apps/khanlab_neuroglia-core_latest.sif'
-    group: 'subj'
-    shell: 'mkdir -p {output} && fslsplit {input}  {output}/vol_'
+if config['analysis_level'] == 'participant':
 
 
-rule conform:
-    input: 
-        nii_dir = bids(root='results', datatype='func',
-                  desc='split', suffix='bold',
-                  **config['input_wildcards']['bold'])
-    params:
-        resample_mm = '3.5x3.5x3.5mm',
-        pad_to = '96x96x25',
-    output: 
-        nii_dir = directory(bids(root='results', datatype='func',
-                  desc='conform', suffix='bold',
-                  **config['input_wildcards']['bold']))
- 
-    container: '/project/6050199/akhanf/singularity/bids-apps/khanlab_autotop_deps_v0.4.1.sif'
-    group: 'subj'
-    shell: 'mkdir -p {output} && '
-            'for in_nii in `ls {input}/*.nii.gz`; do '
-            ' filename=${{in_nii##*/}} && '
-            ' prefix=${{filename%%.nii.gz}} &&'
-            ' out_nii={output}/${{prefix}}_0000.nii.gz && ' #always append _0000.nii.gz for nnunet
-            ' c3d $in_nii -resample-mm {params.resample_mm} -pad-to {params.pad_to} 0 $out_nii;' 
-            'done'
+    rule all_test:
+        input:
+            nii = expand(bids(root='results', datatype='func',
+                      desc='brain', suffix='mask.nii.gz',
+                      **config['input_wildcards']['bold']),
+                            zip,
+                            **config['input_zip_lists']['bold'])
+
+    include: 'rules/inference.smk'
+
+
+elif config['analysis_level'] == 'train':
 
 
 
 
+    rule all_train:
+        input:
+           expand('resources/trained_models/nnUNet/{arch}/{unettask}/{trainer}__nnUNetPlansv2.1/fold_{fold}/{checkpoint}.model',
+                        fold=range(5), 
+                        checkpoint = config['download_model'][model]['checkpoint'],
+                        unettask = config['download_model'][model]['unettask'],
+                        arch=config['nnunet']['arch'], 
+                        trainer=config['nnunet']['trainer'])
 
-rule download_model:
-    params: 
-        url = config['download_model'][model]['url']
-    output: os.path.join('resources',config['download_model'][model]['tar'])
-    shell: 'pushd resources && wget {params.url}'
-
-rule extract_model:
-    input: os.path.join('resources',config['download_model'][model]['tar'])
-    output: 
-        models = expand(os.path.join('resources','trained_models',config['download_model'][model]['out']),fold=range(5)),
-    shell: 'mkdir -p resources/trained_model && tar -C resources/trained_models -xvf {input}'
-
-
-rule run_inference:
-    input:
-        nii_dir = bids(root='results', datatype='func',
-                  desc='conform', suffix='bold',
-                  **config['input_wildcards']['bold']),
-        model_tar = os.path.join('resources',config['download_model'][model]['tar'])
-    output:
-        nii_dir = directory(
-                    bids(root='results', datatype='func',
-                        desc='brain', suffix='mask',
-                        **config['input_wildcards']['bold']))
-    threads: 8
-    resources:
-        mem_mb = 32000,
-        time = 30,
-        augmentation_threads = 4,
-    group: 'subj'
-    shadow: 'minimal'
-    params:
-        temp_img = 'tempimg/temp_0000.nii.gz',
-        temp_lbl = 'templbl/temp.nii.gz',
-        model_dir = 'tempmodel',
-        in_folder = 'tempimg',
-        out_folder = 'templbl',
-        chkpnt = config['download_model'][model]['checkpoint'],
-        unettask = config['download_model'][model]['unettask'],
-    container: '/project/6050199/akhanf/singularity/bids-apps/khanlab_hippunfold_v0.5.1.sif'
-    shell: 'mkdir -p {params.model_dir} {params.in_folder} {params.out_folder} {output.nii_dir} && ' #create temp folders
-           'cp -v {input.nii_dir}/*.nii.gz {params.in_folder} && ' #cp input image to temp folder
-           'tar -xvf {input.model_tar} -C {params.model_dir} && ' #extract model
-           'export RESULTS_FOLDER={params.model_dir} && ' #set nnunet env var to point to model
-           'export nnUNet_n_proc_DA={resources.augmentation_threads} && ' #set threads
-           'nnUNet_predict -i {params.in_folder} -o {params.out_folder} '
-           ' -t {params.unettask} -chk {params.chkpnt} && ' # run inference
-           'cp -v {params.out_folder}/*.nii.gz {output.nii_dir}' #copy from temp output folder to final output
+    rule all_model_tar:
+        """Target rule to package trained model into a tar file"""
+        input:
+            model_tar = expand('resources/trained_model.{arch}.{unettask}.{trainer}.{checkpoint}.tar',
+                        checkpoint = config['download_model'][model]['checkpoint'],
+                        unettask = config['download_model'][model]['unettask'],
+                        arch=config['nnunet']['arch'], 
+                        trainer=config['nnunet']['trainer'])
 
 
-
-rule merge_mask:
-    input:
-        nii_dir = bids(root='results', datatype='func',
-                  desc='brain', suffix='mask',
-                  **config['input_wildcards']['bold'])
-    output:
-        nii = bids(root='results', datatype='func',
-                  desc='brain', suffix='mask.nii.gz',
-                  **config['input_wildcards']['bold'])
-    group: 'subj'
-    log: bids(root='logs',**config['input_wildcards']['bold'],suffix='merge.txt')
-    container: '/project/6050199/akhanf/singularity/bids-apps/khanlab_neuroglia-core_latest.sif'
-    shell: 
-        'fslmerge -t {output} {input}/*.nii.gz'
+    include: 'rules/training.smk'
 
 

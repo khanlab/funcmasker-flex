@@ -1,0 +1,19 @@
+{ 
+ "name": "Fetal brain masking", 
+ "description": "nnUnet training data for fetal bold mri",
+ "reference": "Western University",
+ "licence":"CC-BY-SA 4.0",
+ "release":"0.1",
+ "tensorImageSize": "3D",
+ "modality": { 
+   "0": "T2" 
+ }, 
+ "labels": { 
+   "0": "background", 
+   "1": "brain"
+ }, 
+ "numTraining": 0, 
+ "numTest": 0,
+ "training":[],
+ "test": []
+}

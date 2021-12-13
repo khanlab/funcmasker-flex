@@ -4,17 +4,20 @@ output_dir: '/path/to/output_dir'
 #enable printing debug statements during parsing -- disable if generating dag visualization
 debug: False
 
-derivatives: False #will search in bids/derivatives if True; can also be path(s) to derivatives datasets
+derivatives: True #will search in bids/derivatives if True; can also be path(s) to derivatives datasets
 
 #list of analysis levels in the bids app 
 analysis_levels: &analysis_levels
  - participant
+ - train
   
 
 #mapping from analysis_level to set of target rules or files
 targets_by_analysis_level:
   participant:
     - ''  # if '', then the first rule is run
+  train:
+    - ''
 
 #this configures the pybids grabber - create an entry for each type of input you want to grab
 # indexed by name of input
@@ -25,6 +28,18 @@ pybids_inputs:
   bold:
     filters:
       suffix: 'bold'
+      extension: '.nii.gz'
+      datatype: 'func'
+    wildcards:
+      - subject
+      - session
+      - acquisition
+      - task
+      - run
+  mask:
+    filters:
+      suffix: 'bold'
+      scope: 'derivatives'
       extension: '.nii.gz'
       datatype: 'func'
     wildcards:
@@ -86,7 +101,7 @@ parse_args:
 singularity:
     fsl: 'docker://brainlife/fsl/6.0.0'
 
-use_downloaded: 'train6subj' #if this doesn't exist in download_model, then will train instead
+use_downloaded: 'trainRutherford' #if this doesn't exist in download_model, then will train instead
 
 download_model:
   trainS6S7S9:
@@ -112,17 +127,30 @@ download_model:
       - S7
       - S9
       - S10
-
+  trainRutherford:
+    url: 'https://www.dropbox.com/s/xx3il3bgm1p9fbh/trained_model.3d_fullres.Task104_fetal_brain_bold_trainRutherford.nnUNetTrainerV2.model_best.tar'
+    tar: 'trained_model.3d_fullres.Task104_fetal_brain_bold_trainRutherford.nnUNetTrainerV2.model_best.tar'
+    out: 'nnUNet/3d_fullres/Task104_fetal_brain_bold_trainRutherford/nnUNetTrainerV2__nnUNetPlansv2.1/fold_{fold}/model_best.model'
+    checkpoint: 'model_best'
+    unettask: 'Task104_fetal_brain_bold_trainRutherford'
 
 nnunet_env:
-  nnUNet_raw_data_base: 'raw_data'
+  nnUNet_raw_data_base: 'results'
   nnUNet_preprocessed: 'preprocessed'
   RESULTS_FOLDER: 'resources/trained_models'
 
 nnunet_env_tmp:
-  nnUNet_raw_data_base: 'raw_data'
+  nnUNet_raw_data_base: 'results'
   nnUNet_preprocessed: '$SLURM_TMPDIR/preprocessed'
   RESULTS_FOLDER: 'resources/trained_models'
 
 
+
+nnunet:
+  trainer: 'nnUNetTrainerV2'
+  arch: '3d_fullres'
+
+
+singularity:
+  neuroglia: 'docker://khanlab/neuroglia-core:latest'
 
