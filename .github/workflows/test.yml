@@ -110,12 +110,12 @@ jobs:
     - name: Install library
       run: poetry install --no-interaction
     #----------------------------------------------
-    # test the workflow with pytest
+    # test the workflow 
     #----------------------------------------------
-    - name: Test with pytest
-      run: |
-        poetry run pytest 
+    - name: Test inference workflow dry-run
+      run: poetry run funcmasker-flex bids output participant --dry-run
 
-
+    - name: Test inference workflow dry-run
+      run: poetry run funcmasker-flex bids output train --dry-run
 
 
