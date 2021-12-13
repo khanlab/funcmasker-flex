@@ -100,12 +100,26 @@ rule merge_mask:
                   **config['input_wildcards']['bold'])
     output:
         nii = bids(root='results', datatype='func',
-                  desc='brain', suffix='mask.nii.gz',
+                  desc='conform', suffix='mask.nii.gz',
                   **config['input_wildcards']['bold'])
     group: 'subj'
     log: bids(root='logs',**config['input_wildcards']['bold'],suffix='merge.txt')
     container: '/project/6050199/akhanf/singularity/bids-apps/khanlab_neuroglia-core_latest.sif'
     shell: 
         'fslmerge -t {output} {input}/*.nii.gz'
+
+rule unconform:
+    """ unconform by resampling mask to the input nifti space"""
+    input:
+        ref = config['input_path']['bold'],
+        mask = bids(root='results', datatype='func',
+                  desc='conform', suffix='mask.nii.gz',
+                  **config['input_wildcards']['bold'])
+    output:
+        mask = bids(root='results', datatype='func',
+                  desc='brain', suffix='mask.nii.gz',
+                  **config['input_wildcards']['bold'])
+    shell:
+        'c4d -int NearestNeighbor {input.ref} {input.mask} -reslice-identity -o {output.mask}'
 
 
