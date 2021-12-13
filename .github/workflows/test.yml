@@ -113,9 +113,9 @@ jobs:
     # test the workflow 
     #----------------------------------------------
     - name: Test inference workflow dry-run
-      run: poetry run funcmasker-flex bids output participant --dry-run
+      run: poetry run funcmasker-flex .tests/bids .tests/output participant --dry-run
 
     - name: Test inference workflow dry-run
-      run: poetry run funcmasker-flex bids output train --dry-run
+      run: poetry run funcmasker-flex .tests/bids .tests/output train --dry-run
 
 
