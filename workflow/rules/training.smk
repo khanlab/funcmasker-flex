@@ -61,12 +61,12 @@ rule split_cleanorient_bold:
         "subj"
     shell:
         #split, then replace suffix with _0000.nii.gz 
+        #need to pad to 96x96x37 as some datasets in rutherford have incorrect cropping..
         "mkdir -p {output} && fslsplit {input}  {output}/{params.img_prefix} && "
         "for im in `ls {output}/*.nii.gz`; do "
         "c3d $im -pad-to 96x96x37 -o ${{im%%.nii.gz}}_0000.nii.gz &&  rm -f $im; "
         "fslorient -deleteorient ${{im%%.nii.gz}}_0000.nii.gz ; "
         "done"
-        #need to pad to 96x96x37 as some datasets in rutherford have incorrect cropping..
 
 
 rule split_cleanorient_mask:
@@ -260,7 +260,6 @@ rule train_fold:
         "{params.rsync_to_tmp} && "
         "export nnUNet_n_proc_DA={resources.dataaugment_threads} && "
         "nnUNet_train {params.checkpoint_opt} {params.arch} {params.trainer} {params.unettask} {wildcards.fold}"
-        #set threads
 
 
 rule package_trained_model:

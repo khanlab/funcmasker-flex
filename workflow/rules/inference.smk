@@ -81,7 +81,6 @@ rule conform:
         " out_nii={output}/${{prefix}}_0000.nii.gz && "
         " c3d $in_nii -resample-mm {params.resample_mm} -pad-to {params.pad_to} 0 $out_nii;"
         "done"
-        #always append _0000.nii.gz for nnunet
 
 
 rule run_inference:
@@ -124,6 +123,13 @@ rule run_inference:
         chkpnt=config["download_model"][model]["checkpoint"],
         unettask=config["download_model"][model]["unettask"],
     shell:
+        #create temp folders
+        #cp input image to temp folder
+        #extract model
+        #set nnunet env var to point to model
+        #set threads
+        # run inference
+        #copy from temp output folder to final output
         "mkdir -p {params.model_dir} {params.in_folder} {params.out_folder} {output.nii_dir} && "
         "cp -v {input.nii_dir}/*.nii.gz {params.in_folder} && "
         "tar -xvf {input.model_tar} -C {params.model_dir} && "
@@ -131,13 +137,7 @@ rule run_inference:
         "export nnUNet_n_proc_DA={resources.dataaugment_threads} && "
         "nnUNet_predict -i {params.in_folder} -o {params.out_folder} "
         " -t {params.unettask} -chk {params.chkpnt} && "
-        "cp -v {params.out_folder}/*.nii.gz {output.nii_dir}"  #create temp folders
-        #cp input image to temp folder
-        #extract model
-        #set nnunet env var to point to model
-        #set threads
-        # run inference
-        #copy from temp output folder to final output
+        "cp -v {params.out_folder}/*.nii.gz {output.nii_dir}"
 
 
 rule merge_mask:
