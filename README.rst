@@ -1,4 +1,4 @@
-nnunet_fetal_brain
+funcmasker_flex
 ============
 
 Brain masking app using Unet for fetal bold mri
