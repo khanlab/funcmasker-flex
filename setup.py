@@ -34,7 +34,10 @@ setuptools.setup(
     ]},
     install_requires=[
         "snakebids>=0.3.16",
-        "snakemake"
+        "snakemake",
+        "matplotlib",
+        "batchgenerators==0.21",
+        "nnunet-inference-on-cpu-and-gpu==1.6.6",
     ],
     python_requires='>=3.7'
 )
