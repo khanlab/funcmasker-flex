@@ -21,7 +21,7 @@ rule split:
         split_dir = directory(bids(root='results', datatype='func',
                   desc='split', suffix='bold',
                   **config['input_wildcards']['bold']))
-    container: '/project/6050199/akhanf/singularity/bids-apps/khanlab_neuroglia-core_latest.sif'
+    container: config['singularity']['neuroglia']
     group: 'subj'
     shell: 'mkdir -p {output} && fslsplit {input}  {output}/vol_'
 
@@ -39,7 +39,7 @@ rule conform:
                   desc='conform', suffix='bold',
                   **config['input_wildcards']['bold']))
  
-    container: '/project/6050199/akhanf/singularity/bids-apps/khanlab_autotop_deps_v0.4.1.sif'
+    container: config['singularity']['neuroglia']
     group: 'subj'
     shell: 'mkdir -p {output} && '
             'for in_nii in `ls {input}/*.nii.gz`; do '
@@ -81,7 +81,6 @@ rule run_inference:
         dataaugment_threads = 4,
         chkpnt = config['download_model'][model]['checkpoint'],
         unettask = config['download_model'][model]['unettask'],
-    container: '/project/6050199/akhanf/singularity/bids-apps/khanlab_hippunfold_v0.5.1.sif'
     shell: 'mkdir -p {params.model_dir} {params.in_folder} {params.out_folder} {output.nii_dir} && ' #create temp folders
            'cp -v {input.nii_dir}/*.nii.gz {params.in_folder} && ' #cp input image to temp folder
            'tar -xvf {input.model_tar} -C {params.model_dir} && ' #extract model
@@ -104,7 +103,7 @@ rule merge_mask:
                   **config['input_wildcards']['bold'])
     group: 'subj'
     log: bids(root='logs',**config['input_wildcards']['bold'],suffix='merge.txt')
-    container: '/project/6050199/akhanf/singularity/bids-apps/khanlab_neuroglia-core_latest.sif'
+    container: config['singularity']['neuroglia']
     shell: 
         'fslmerge -t {output} {input}/*.nii.gz'
 
@@ -119,6 +118,8 @@ rule unconform:
         mask = bids(root='results', datatype='func',
                   desc='brain', suffix='mask.nii.gz',
                   **config['input_wildcards']['bold'])
+    container: config['singularity']['neuroglia']
+    group: 'subj'
     shell:
         'c4d -int NearestNeighbor {input.ref} {input.mask} -reslice-identity -o {output.mask}'
 

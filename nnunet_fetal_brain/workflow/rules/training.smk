@@ -35,7 +35,7 @@ rule split_cleanorient_bold:
         split_dir = directory(bids(root='results', datatype='func',
                   desc='cleanorient', suffix='bold',
                   **config['input_wildcards']['bold']))
-    container: '/project/6050199/akhanf/singularity/bids-apps/khanlab_neuroglia-core_latest.sif'
+    container: config['singularity']['neuroglia']
     group: 'subj'
     shell: 
         #split, then replace suffix with _0000.nii.gz 
@@ -59,7 +59,7 @@ rule split_cleanorient_mask:
         split_dir = directory(bids(root='results', datatype='func',
                   desc='cleanorient', suffix='mask',
                   **config['input_wildcards']['mask']))
-    container: '/project/6050199/akhanf/singularity/bids-apps/khanlab_neuroglia-core_latest.sif'
+    container: config['singularity']['neuroglia']
     group: 'subj'
     shell: 'mkdir -p {output} && fslsplit {input}  {output}/{params.img_prefix}'
 

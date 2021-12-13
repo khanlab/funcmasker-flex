@@ -151,6 +151,9 @@ nnunet:
   arch: '3d_fullres'
 
 
+singularity:
+  neuroglia: 'docker://khanlab/neuroglia-core:latest'
+
  
 train_subjects:
  - 2011
