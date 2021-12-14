@@ -13,7 +13,7 @@ derivatives: True #will search in bids/derivatives if True; can also be path(s) 
 analysis_levels: &analysis_levels
  - participant
  - train
-  
+ - evaluate  
 
 #mapping from analysis_level to set of target rules or files
 targets_by_analysis_level:
@@ -21,6 +21,9 @@ targets_by_analysis_level:
     - ''  # if '', then the first rule is run
   train:
     - ''
+  evaluate:
+    - ''
+
 
 #this configures the pybids grabber - create an entry for each type of input you want to grab
 # indexed by name of input

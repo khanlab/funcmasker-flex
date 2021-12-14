@@ -77,3 +77,13 @@ elif config["analysis_level"] == "train":
             ),
 
     include: "rules/training.smk"
+
+
+elif config["analysis_level"] == "evaluate":
+
+    rule all_evaluate:
+        input:
+            "test_dice.csv",
+
+    include: "rules/inference.smk"
+    include: "rules/evaluate.smk"

@@ -114,8 +114,6 @@ rule run_inference:
     shadow:
         "minimal"
     params:
-        temp_img="tempimg/temp_0000.nii.gz",
-        temp_lbl="templbl/temp.nii.gz",
         model_dir="tempmodel",
         in_folder="tempimg",
         out_folder="templbl",
@@ -191,4 +189,4 @@ rule unconform:
     group:
         "subj"
     shell:
-        "c4d -int NearestNeighbor {input.ref} {input.mask} -reslice-identity -o {output.mask}"
+        "reg_resample -NN 0 -ref {input.ref} -flo {input.mask} -res {output.mask}"

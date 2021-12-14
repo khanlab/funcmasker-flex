@@ -115,8 +115,10 @@ jobs:
     - name: Test inference workflow dry-run
       run: poetry run funcmasker-flex .tests/bids .tests/output participant --dry-run
 
-      #this one isn't working!
-      #    - name: Test inference workflow dry-run
-      #run: poetry run funcmasker-flex .tests/bids .tests/output train --dry-run
+    - name: Test training workflow dry-run
+      run: poetry run funcmasker-flex .tests/bids .tests/output train --path_mask .tests/bids/derivatives/manual-masks/sub-{subject}/ses-{session}/func/sub-{subject}_ses-{session}_task-{task}_bold.nii.gz --dry-run
+
+    - name: Test evaluate workflow dry-run
+      run: poetry run funcmasker-flex .tests/bids .tests/output evaluate --path_mask .tests/bids/derivatives/manual-masks/sub-{subject}/ses-{session}/func/sub-{subject}_ses-{session}_task-{task}_bold.nii.gz --dry-run
 
 
