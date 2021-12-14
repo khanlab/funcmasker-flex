@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "funcmasker-flex"
-version = "-prerelease.1"
+version = "0.1.0-pre.1"
 description = ""
 authors = ["Ali Khan <alik@robarts.ca>"]
 license = "MIT"
