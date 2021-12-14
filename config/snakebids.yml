@@ -1,5 +1,8 @@
-bids_dir: '/path/to/bids_dir'
-output_dir: '/path/to/output_dir'
+bids_dir: '.tests/bids'
+output_dir: '.tests/output'
+participant_label:
+exclude_participant_label:
+analysis_level: 'participant'
 
 #enable printing debug statements during parsing -- disable if generating dag visualization
 debug: False
@@ -28,6 +31,7 @@ pybids_inputs:
   bold:
     filters:
       suffix: 'bold'
+      scope: 'raw'
       extension: '.nii.gz'
       datatype: 'func'
     wildcards:
@@ -154,3 +158,5 @@ nnunet:
 singularity:
   neuroglia: 'docker://khanlab/neuroglia-core:latest'
 
+
+ 

@@ -19,7 +19,7 @@ import sphinx_rtd_theme
 # -- Project information -----------------------------------------------------
 
 
-project = 'nnunet_fetal_brain'
+project = 'funcmasker_flex'
 copyright = '2021, Ali Khan'
 author = 'Ali Khan'
 

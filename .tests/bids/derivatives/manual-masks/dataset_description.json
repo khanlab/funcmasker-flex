@@ -1,0 +1,19 @@
+{
+  "Name": "manual-masks",
+  "BIDSVersion": "1.4.0",
+  "DatasetType": "derivative",
+  "GeneratedBy": [
+    {
+      "Name": "manual-masks",
+      "Version": "1.0.0"
+    }
+  ],
+  "SourceDatasets": [
+    {
+      "DOI": "10.18112/openneuro.ds003090.v1.0.0",
+      "URL": "https://openneuro.org/datasets/ds003090/versions/1.0.0",
+      "Version": "1.0.0"
+    }
+  ]
+}
+

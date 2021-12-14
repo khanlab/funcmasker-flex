@@ -1,0 +1,27 @@
+{
+    "Name": "fetal-fMRI",
+    "BIDSVersion": "1.4.0",
+    "DatasetType": "raw",
+    "License": "CC0",
+    "Authors": [
+        "Saige Rutherford",
+        "Pascal Sturmfels",
+        "Mike Angstadt",
+        "Jasmine Hect",
+        "Marion van den Heuvel",
+        "Jenna Wiens",
+        "Dustin Scheinost",
+        "Chandra Sripada",
+        "Moriah Thomason"
+    ],
+    "Acknowledgements": "We thank the Detroit, MI participant families who generously shared their time with us during this study.",
+    "HowToAcknowledge": "Please cite this paper: \nAutomated Brain Masking of Fetal Functional MRI\nSaige Rutherford, Pascal Sturmfels, Mike Angstadt, Jasmine Hect, Jenna Wiens, Marion van den Heuval, Dustin Scheinost, Moriah Thomason, Chandra Sripada\nbioRxiv 525386; doi: https://doi.org/10.1101/525386",
+    "Funding": [
+        "National Institute of Mental Health / NIH/ DHHS Grant R01MH110793",
+        "National Institute of Mental Health / NIH/ DHHS Grant R01MH122447",
+        "National Institute of Environmental Health Sciences / NIH/ DHHS Grant R01ES032294",
+        "National Institute on Drug Abuse / NIH/ DHHS Grant R34DA050287"
+    ],
+    "ReferencesAndLinks": [],
+    "DatasetDOI": "10.18112/openneuro.ds003090.v1.0.0"
+}
