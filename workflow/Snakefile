@@ -87,3 +87,12 @@ elif config["analysis_level"] == "evaluate":
 
     include: "rules/inference.smk"
     include: "rules/evaluate.smk"
+
+
+elif config["analysis_level"] == "evaluate_rutherford":
+
+    rule all_evaluate_rutherford:
+        input:
+            "test_rutherfordunet_dice.csv",
+
+    include: "rules/evaluate_rutherford.smk"
