@@ -2,8 +2,8 @@ Command line interface
 --------------------
 
 .. argparse::
-   :filename: ../nnunet_fetal_brain/run.py
+   :filename: ../funcmasker_flex/run.py
    :func: get_parser
-   :prog: nnunet_fetal_brain
+   :prog: funcmasker-flex
 
 
