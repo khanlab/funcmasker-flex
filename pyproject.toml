@@ -6,7 +6,7 @@ authors = ["Ali Khan <alik@robarts.ca>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = ">=3.8,<3.11"
+python = ">=3.8,<3.10"
 snakebids = "0.4.0"
 batchgenerators = "0.21"
 nnunet-inference-on-cpu-and-gpu = "1.6.6"
