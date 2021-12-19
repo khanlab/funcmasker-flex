@@ -3,9 +3,10 @@
 Brain masking app using Unet for fetal bold mri
 
 
-## Example usage:
+### Example usage:
 
 Get a sample subject dataset:
+
     datalad install https://github.com/OpenNeuroDatasets/ds003090.git
     cd ds003090/
     datalad get sub-2225
