@@ -17,3 +17,5 @@ apt-get update && apt-get install -y libopenblas-dev libgraphviz-dev && pip inst
 
 #add external binaries to the path
 export PATH=/src/ext-bin:$PATH
+export CUDA_VISIBLE_DEVICES=""
+export FSLOUTPUTTYPE=NIFTI_GZ
