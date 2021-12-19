@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+export PWD=`pwd -P`
+singularity exec --pwd $PWD /srv/software/niftyreg_1.3.9/niftyreg_1.3.9 reg_resample $@
