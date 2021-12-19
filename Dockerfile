@@ -4,7 +4,7 @@ MAINTAINER alik@robarts.ca
 
 COPY . /src/
 
-RUN apt-get update && apt-get install -y libgraphviz-dev && pip install --upgrade pip && pip install /src
+RUN apt-get update && apt-get install -y libopenblas-dev libgraphviz-dev && pip install --upgrade pip && pip install /src
 
 ENV PATH=/src/ext-bin:$PATH
 
