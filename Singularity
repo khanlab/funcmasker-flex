@@ -11,7 +11,7 @@ funcmasker-flex "$@"
 
 %post
 
-apt install -y graphviz-dev && pip install --upgrade pip && pip install /src
+apt-get update && apt-get install -y libgraphviz-dev && pip install --upgrade pip && pip install /src
 
 %environment
 
