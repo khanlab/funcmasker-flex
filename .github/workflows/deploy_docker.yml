@@ -3,7 +3,7 @@ name: Deploy to docker hub
 on:
   push:
     branches:
-      - 'singularity'
+      - 'main'
 
 jobs:
   docker:
