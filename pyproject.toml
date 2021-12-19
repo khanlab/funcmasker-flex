@@ -4,6 +4,15 @@ version = "0.1.2-pre.1"
 description = ""
 authors = ["Ali Khan <alik@robarts.ca>"]
 license = "MIT"
+packages = [
+    { include = 'funcmasker_flex' },
+]
+include = [
+    { path = 'funcmasker_flex/resources', format='wheel'},
+    { path = 'funcmasker_flex/config', format='wheel'},
+    { path = 'funcmasker_flex/workflow', format='wheel'}
+]
+
 
 [tool.poetry.dependencies]
 python = ">=3.8,<3.10"
@@ -34,14 +43,20 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poe.tasks]
 quality_check = { shell = "isort funcmasker_flex -c && black funcmasker_flex --check && flake8 funcmasker_flex && pylint funcmasker_flex && snakefmt . --check" }
-quality_fix = { shell = "isort funcmasker_flex && black funcmasker_flex  && flake8 funcmasker_flex && pylint funcmasker_flex && snakefmt ." }
+quality_fix = { shell = "isort funcmasker_flex && black funcmasker_flex && flake8 funcmasker_flex && pylint funcmasker_flex && snakefmt ." }
 test = "pytest"
+
 
 [tool.isort]
 profile = "black"
 multi_line_output = 3
 
+[tool.black]
+line-length = 88
+extend-exclude = 'workflow'
+
 [tool.pylint.master]
+ignore = "workflow"
 ignore-patterns = "^[0-9][0-9]+_,^test_"
 
 [tool.pylint.format]
