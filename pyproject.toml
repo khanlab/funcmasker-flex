@@ -5,6 +5,7 @@ description = ""
 authors = ["Ali Khan <alik@robarts.ca>"]
 license = "MIT"
 
+
 [tool.poetry.dependencies]
 python = ">=3.8,<3.10"
 snakebids = "0.4.0"
@@ -33,8 +34,8 @@ build-backend = "poetry.core.masonry.api"
 
 
 [tool.poe.tasks]
-quality_check = { shell = "isort funcmasker_flex -c && black funcmasker_flex --check && flake8 funcmasker_flex && pylint funcmasker_flex && snakefmt . --check" }
-quality_fix = { shell = "isort funcmasker_flex && black funcmasker_flex  && flake8 funcmasker_flex && pylint funcmasker_flex && snakefmt ." }
+quality_check = { shell = "isort funcmasker_flex -c && black funcmasker_flex --check --exclude workflow && flake8 funcmasker_flex && pylint funcmasker_flex && snakefmt . --check" }
+quality_fix = { shell = "isort funcmasker_flex && black funcmasker_flex --exclude workflow && flake8 funcmasker_flex && pylint funcmasker_flex && snakefmt ." }
 test = "pytest"
 
 [tool.isort]
