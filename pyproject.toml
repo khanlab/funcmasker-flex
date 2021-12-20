@@ -4,14 +4,6 @@ version = "0.1.3-pre.2"
 description = ""
 authors = ["Ali Khan <alik@robarts.ca>"]
 license = "MIT"
-packages = [
-    { include = 'funcmasker_flex' },
-]
-include = [
-    { path = 'funcmasker_flex/resources', format='wheel'},
-    { path = 'funcmasker_flex/config', format='wheel'},
-    { path = 'funcmasker_flex/workflow', format='wheel'}
-]
 
 
 [tool.poetry.dependencies]
@@ -21,6 +13,8 @@ batchgenerators = "0.21"
 nnunet-inference-on-cpu-and-gpu = "1.6.6"
 snakemake = "^6.12.3"
 matplotlib = "^3.5.1"
+pygraphviz = "^1.7"
+Pygments = "^2.10.0"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^4.0.1"
@@ -42,8 +36,8 @@ build-backend = "poetry.core.masonry.api"
 
 
 [tool.poe.tasks]
-quality_check = { shell = "isort funcmasker_flex -c && black funcmasker_flex --check && flake8 funcmasker_flex && pylint funcmasker_flex && snakefmt . --check" }
-quality_fix = { shell = "isort funcmasker_flex && black funcmasker_flex && flake8 funcmasker_flex && pylint funcmasker_flex && snakefmt ." }
+quality_check = { shell = "isort funcmasker_flex -c && black funcmasker_flex --check && flake8 funcmasker_flex && pylint funcmasker_flex && snakefmt funcmasker_flex --check" }
+quality_fix = { shell = "isort funcmasker_flex && black funcmasker_flex && flake8 funcmasker_flex && pylint funcmasker_flex && snakefmt funcmasker_flex" }
 test = "pytest"
 
 

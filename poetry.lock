@@ -900,6 +900,22 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
 [[package]]
+name = "pygments"
+version = "2.10.0"
+description = "Pygments is a syntax highlighting package written in Python."
+category = "main"
+optional = false
+python-versions = ">=3.5"
+
+[[package]]
+name = "pygraphviz"
+version = "1.7"
+description = "Python interface to Graphviz"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[[package]]
 name = "pylint"
 version = "2.12.2"
 description = "python code static checker"
@@ -1452,7 +1468,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8,<3.10"
-content-hash = "fbff45503babc7e8391861d97986529cedb55410fe0c81e3e6a05d388225daa4"
+content-hash = "344ad26d19720c058f29662c1e8e9c333eac12736b56fdd533087d2a1a7454a4"
 
 [metadata.files]
 appdirs = [
@@ -2068,6 +2084,13 @@ pydicom = [
 pyflakes = [
     {file = "pyflakes-2.4.0-py2.py3-none-any.whl", hash = "sha256:3bb3a3f256f4b7968c9c788781e4ff07dce46bdf12339dcda61053375426ee2e"},
     {file = "pyflakes-2.4.0.tar.gz", hash = "sha256:05a85c2872edf37a4ed30b0cce2f6093e1d0581f8c19d7393122da7e25b2b24c"},
+]
+pygments = [
+    {file = "Pygments-2.10.0-py3-none-any.whl", hash = "sha256:b8e67fe6af78f492b3c4b3e2970c0624cbf08beb1e493b2c99b9fa1b67a20380"},
+    {file = "Pygments-2.10.0.tar.gz", hash = "sha256:f398865f7eb6874156579fdf36bc840a03cab64d1cde9e93d68f46a425ec52c6"},
+]
+pygraphviz = [
+    {file = "pygraphviz-1.7.zip", hash = "sha256:a7bec6609f37cf1e64898c59f075afd659106cf9356c5f387cecaa2e0cdb2304"},
 ]
 pylint = [
     {file = "pylint-2.12.2-py3-none-any.whl", hash = "sha256:daabda3f7ed9d1c60f52d563b1b854632fd90035bcf01443e234d3dc794e3b74"},

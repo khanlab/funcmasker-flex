@@ -14,7 +14,7 @@ rule download_model:
 
 rule extract_model:
     input:
-        os.path.join("resources", config["download_model"][model]["tar"]),
+        rules.download_model.output,
     output:
         models=expand(
             os.path.join(
@@ -30,13 +30,15 @@ rule split:
     input:
         config["input_path"]["bold"],
     output:
-        split_dir=directory(
-            bids(
-                root="results",
-                datatype="func",
-                desc="split",
-                suffix="bold",
-                **config["input_wildcards"]["bold"]
+        split_dir=temp(
+            directory(
+                bids(
+                    root="results",
+                    datatype="func",
+                    desc="split",
+                    suffix="bold",
+                    **config["input_wildcards"]["bold"]
+                )
             )
         ),
     container:
@@ -49,24 +51,20 @@ rule split:
 
 rule conform:
     input:
-        nii_dir=bids(
-            root="results",
-            datatype="func",
-            desc="split",
-            suffix="bold",
-            **config["input_wildcards"]["bold"]
-        ),
+        rules.split.output,
     params:
         resample_mm="3.5x3.5x3.5mm",
         pad_to="96x96x37",
     output:
-        nii_dir=directory(
-            bids(
-                root="results",
-                datatype="func",
-                desc="conform",
-                suffix="bold",
-                **config["input_wildcards"]["bold"]
+        nii_dir=temp(
+            directory(
+                bids(
+                    root="results",
+                    datatype="func",
+                    desc="conform",
+                    suffix="bold",
+                    **config["input_wildcards"]["bold"]
+                )
             )
         ),
     container:
@@ -85,22 +83,18 @@ rule conform:
 
 rule run_inference:
     input:
-        nii_dir=bids(
-            root="results",
-            datatype="func",
-            desc="conform",
-            suffix="bold",
-            **config["input_wildcards"]["bold"]
-        ),
-        model_tar=os.path.join("resources", config["download_model"][model]["tar"]),
+        nii_dir=rules.conform.output,
+        model_tar=rules.download_model.output,
     output:
-        nii_dir=directory(
-            bids(
-                root="results",
-                datatype="func",
-                desc="brain",
-                suffix="mask",
-                **config["input_wildcards"]["bold"]
+        nii_dir=temp(
+            directory(
+                bids(
+                    root="results",
+                    datatype="func",
+                    desc="brain",
+                    suffix="mask",
+                    **config["input_wildcards"]["bold"]
+                )
             )
         ),
     threads: 8
@@ -140,20 +134,16 @@ rule run_inference:
 
 rule merge_mask:
     input:
-        nii_dir=bids(
-            root="results",
-            datatype="func",
-            desc="brain",
-            suffix="mask",
-            **config["input_wildcards"]["bold"]
-        ),
+        rules.run_inference.output,
     output:
-        nii=bids(
-            root="results",
-            datatype="func",
-            desc="conform",
-            suffix="mask.nii.gz",
-            **config["input_wildcards"]["bold"]
+        nii=temp(
+            bids(
+                root="results",
+                datatype="func",
+                desc="conform",
+                suffix="mask.nii.gz",
+                **config["input_wildcards"]["bold"]
+            )
         ),
     group:
         "subj"
@@ -169,13 +159,7 @@ rule unconform:
     """ unconform by resampling mask to the input nifti space"""
     input:
         ref=config["input_path"]["bold"],
-        mask=bids(
-            root="results",
-            datatype="func",
-            desc="conform",
-            suffix="mask.nii.gz",
-            **config["input_wildcards"]["bold"]
-        ),
+        mask=rules.merge_mask.output,
     output:
         mask=bids(
             root="results",
