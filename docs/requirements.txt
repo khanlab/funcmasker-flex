@@ -1,5 +1,4 @@
 sphinx-argparse
 sphinx_rtd_theme
 git+git://github.com/pvandyken/snakebids@refactor-app#egg=snakebids
-mistune<2.0.0 
-m2r==0.2.1 
+m2r2

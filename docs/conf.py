@@ -32,7 +32,7 @@ author = 'Ali Khan'
 extensions = [
     "sphinx_rtd_theme",
     "sphinxarg.ext",
-    'm2r',
+    'm2r2',
 ]
 
 
