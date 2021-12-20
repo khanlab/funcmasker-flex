@@ -6,7 +6,7 @@ from snakebids.app import SnakeBidsApp
 
 def get_parser():
     """Exposes parser for sphinx doc generation, cwd is the docs dir"""
-    app = SnakeBidsApp("../", skip_parse_args=True)
+    app = SnakeBidsApp("../")
     return app.parser
 
 
