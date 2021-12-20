@@ -4,14 +4,6 @@ version = "0.1.2"
 description = ""
 authors = ["Ali Khan <alik@robarts.ca>"]
 license = "MIT"
-packages = [
-    { include = 'funcmasker_flex' },
-]
-include = [
-    { path = 'funcmasker_flex/resources', format='wheel'},
-    { path = 'funcmasker_flex/config', format='wheel'},
-    { path = 'funcmasker_flex/workflow', format='wheel'}
-]
 
 
 [tool.poetry.dependencies]
