@@ -1,3 +1,4 @@
 sphinx-argparse
 sphinx_rtd_theme
-snakebids
+git+git://github.com/pvandyken/snakebids@refactor-app#egg=snakebids
+
