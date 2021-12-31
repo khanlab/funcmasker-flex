@@ -122,14 +122,16 @@ rule run_inference:
         #set threads
         # run inference
         #copy from temp output folder to final output
+        nnunet_env.make_venv(
         "mkdir -p {params.model_dir} {params.in_folder} {params.out_folder} {output.nii_dir} && "
         "cp -v {input.nii_dir}/*.nii.gz {params.in_folder} && "
         "tar -xvf {input.model_tar} -C {params.model_dir} && "
         "export RESULTS_FOLDER={params.model_dir} && "
         "export nnUNet_n_proc_DA={resources.dataaugment_threads} && "
+        "export CUDA_VISIBLE_DEVICES= && "
         "nnUNet_predict -i {params.in_folder} -o {params.out_folder} "
         " -t {params.unettask} -chk {params.chkpnt} && "
-        "cp -v {params.out_folder}/*.nii.gz {output.nii_dir}"
+        "cp -v {params.out_folder}/*.nii.gz {output.nii_dir}")
 
 
 rule merge_mask:

@@ -1,3 +1,5 @@
+pip-flags: 
+scratch_dir: '/localscratch'
 bids_dir: '.tests/bids'
 output_dir: '.tests/output'
 participant_label:
