@@ -18,11 +18,11 @@ analysis_levels: &analysis_levels
 #mapping from analysis_level to set of target rules or files
 targets_by_analysis_level:
   participant:
-    - ''  # if '', then the first rule is run
+    - all_test  # if '', then the first rule is run
   train:
-    - ''
+    - all_train
   evaluate:
-    - ''
+    - all_evaluate
 
 
 #this configures the pybids grabber - create an entry for each type of input you want to grab
