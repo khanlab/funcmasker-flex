@@ -1,5 +1,3 @@
-
-
 def get_dice_cmd(wildcards, input, output):
 
     cmd = []
@@ -20,33 +18,31 @@ def get_dice_cmd(wildcards, input, output):
 
 
 def get_rutherford_masks(wildcards):
-    """ assume these are created elsewhere for now.. """
-    in_dir =  bids(
-                root="results",
-                datatype="func",
-                desc="rutherford",
-                suffix="mask",
-                **config["input_wildcards"]["mask"]
-            ).format(**wildcards)
-    niftis = sorted(glob(f'{in_dir}/*.nii.gz'))
+    """assume these are created elsewhere for now.."""
+    in_dir = bids(
+        root="results",
+        datatype="func",
+        desc="rutherford",
+        suffix="mask",
+        **config["input_wildcards"]["mask"],
+    ).format(**wildcards)
+    niftis = sorted(glob(f"{in_dir}/*.nii.gz"))
     return niftis
 
- 
+
 def get_manual_masks(wildcards):
-    """ assume these are created elsewhere for now.. """
-    in_dir =  bids(
-                root="results",
-                datatype="func",
-                desc="manualclean",
-                suffix="mask",
-                **config["input_wildcards"]["mask"]
-            ).format(**wildcards)
-    
-    niftis = sorted(glob(f'{in_dir}/*.nii.gz'))
-    return niftis
-    
+    """assume these are created elsewhere for now.."""
+    in_dir = bids(
+        root="results",
+        datatype="func",
+        desc="manualclean",
+        suffix="mask",
+        **config["input_wildcards"]["mask"],
+    ).format(**wildcards)
 
-   
+    niftis = sorted(glob(f"{in_dir}/*.nii.gz"))
+    return niftis
+
 
 rule calc_dice:
     input:
@@ -58,7 +54,7 @@ rule calc_dice:
         csv=bids(
             root="results",
             datatype="func",
-            desc='rutherfordunet',
+            desc="rutherfordunet",
             suffix="dice.txt",
             **config["input_wildcards"]["mask"]
         ),
@@ -72,7 +68,7 @@ rule concat_dice:
             bids(
                 root="results",
                 datatype="func",
-                desc='rutherfordunet',
+                desc="rutherfordunet",
                 suffix="dice.txt",
                 **config["input_wildcards"]["bold"]
             ),
