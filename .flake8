@@ -6,3 +6,4 @@ extend-exclude =
     dist/
     .venv/
     docs/
+    workflow
