@@ -14,6 +14,7 @@ analysis_levels: &analysis_levels
  - participant
  - train
  - evaluate  
+ - evaluate_rutherford
 
 #mapping from analysis_level to set of target rules or files
 targets_by_analysis_level:
@@ -23,7 +24,8 @@ targets_by_analysis_level:
     - ''
   evaluate:
     - ''
-
+  evaluate_rutherford:
+    - ''
 
 #this configures the pybids grabber - create an entry for each type of input you want to grab
 # indexed by name of input
