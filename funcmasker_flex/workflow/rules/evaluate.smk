@@ -140,6 +140,7 @@ def get_dice_cmd(wildcards, input, output):
             f" sed 's/OVL: 1/{subjid}_vol-{i}/' "
             f" >> {output.csv}"
         )
+
     return " && ".join(cmd)
 
 
@@ -159,7 +160,6 @@ rule calc_dice:
     shell:
         "{params.dice_cmd}"
 
-
 rule concat_dice:
     input:
         dice=expand(
@@ -167,10 +167,10 @@ rule concat_dice:
                 root="results",
                 datatype="func",
                 suffix="dice.txt",
-                **config["input_wildcards"]["bold"]
+                **config["input_wildcards"]["mask"]
             ),
             zip,
-            **config["input_zip_lists"]["bold"]
+            **config["input_zip_lists"]["mask"]
         ),
     params:
         header="id,voxels_manual,voxels_auto,voxels_overlap,dice,jaccard",
