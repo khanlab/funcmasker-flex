@@ -173,4 +173,4 @@ rule unconform:
     group:
         "subj"
     shell:
-        "reg_resample -NN 0 -ref {input.ref} -flo {input.mask} -res {output.mask}"
+        "antsApplyTransforms -d 3 -e 3 -n NearestNeighbor -r  {input.ref} -i {input.mask} -o {output.mask}"
