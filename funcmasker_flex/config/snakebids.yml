@@ -4,6 +4,8 @@ participant_label:
 exclude_participant_label:
 analysis_level: 'participant'
 
+del_orient: False
+
 #enable printing debug statements during parsing -- disable if generating dag visualization
 debug: False
 
