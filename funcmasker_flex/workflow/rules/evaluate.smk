@@ -5,6 +5,12 @@
 rule cleanorient_manual_mask:
     input:
         nii=config["input_path"]["mask"],
+    params:
+        del_orient=lambda wildcards, output: "&& fslorient -deleteorient {output}".format(
+            output=output
+        )
+        if config["del_orient"]
+        else "",
     output:
         nii=bids(
             root="results",
@@ -14,7 +20,7 @@ rule cleanorient_manual_mask:
             **config["input_wildcards"]["mask"]
         ),
     shell:
-        "c4d {input} -foreach -binarize -endfor -o {output} && fslorient -deleteorient {output}"
+        "c4d {input} -foreach -binarize -endfor -o {output} {params.del_orient}"
 
 
 rule cleanorient_unet_mask:
@@ -26,6 +32,12 @@ rule cleanorient_unet_mask:
             suffix="mask.nii.gz",
             **config["input_wildcards"]["mask"]
         ),
+    params:
+        del_orient=lambda wildcards, output: "&& fslorient -deleteorient {output}".format(
+            output=output
+        )
+        if config["del_orient"]
+        else "",
     output:
         nii=bids(
             root="results",
@@ -35,7 +47,23 @@ rule cleanorient_unet_mask:
             **config["input_wildcards"]["mask"]
         ),
     shell:
-        "c4d {input} -foreach -binarize -endfor -o {output} && fslorient -deleteorient {output}"
+        "c4d {input} -foreach -binarize -endfor -o {output} {params.del_orient}"
+
+
+def getcmd_split_mask(wildcards, input, output):
+    if config["del_orient"]:
+        return (
+            "mkdir -p {output} && fslsplit {input}  {output}/vol && "
+            "for im in `ls {output}/*.nii.gz`; do "
+            "c3d $im -pad-to 96x96x37 -o ${{im%%.nii.gz}}_pad.nii.gz && rm -f $im "
+            "&& fslorient -deleteorient ${{im%%.nii.gz}}_pad.nii.gz ; done "
+        ).format(input=input, output=output)
+    else:
+        return (
+            "mkdir -p {output} && fslsplit {input}  {output}/vol && "
+            "for im in `ls {output}/*.nii.gz`; do "
+            "c3d $im -pad-to 96x96x37 -o ${{im%%.nii.gz}}_pad.nii.gz && rm -f $im; done"
+        ).format(input=input, output=output)
 
 
 checkpoint split_manual_mask:
@@ -47,6 +75,8 @@ checkpoint split_manual_mask:
             suffix="mask.nii.gz",
             **config["input_wildcards"]["mask"]
         ),
+    params:
+        cmd=getcmd_split_mask,
     output:
         split_dir=directory(
             bids(
@@ -62,11 +92,7 @@ checkpoint split_manual_mask:
     group:
         "subj"
     shell:
-        "mkdir -p {output} && fslsplit {input}  {output}/vol && "
-        "for im in `ls {output}/*.nii.gz`; do "
-        "c3d $im -pad-to 96x96x37 -o ${{im%%.nii.gz}}_pad.nii.gz && rm -f $im && "
-        "fslorient -deleteorient ${{im%%.nii.gz}}_pad.nii.gz ;"
-        "done"
+        "{params.cmd}"
 
 
 checkpoint split_unet_mask:
@@ -78,6 +104,8 @@ checkpoint split_unet_mask:
             suffix="mask.nii.gz",
             **config["input_wildcards"]["mask"]
         ),
+    params:
+        cmd=getcmd_split_mask,
     output:
         split_dir=directory(
             bids(
@@ -93,11 +121,7 @@ checkpoint split_unet_mask:
     group:
         "subj"
     shell:
-        "mkdir -p {output} && fslsplit {input}  {output}/vol && "
-        "for im in `ls {output}/*.nii.gz`; do "
-        "c3d $im -pad-to 96x96x37 -o ${{im%%.nii.gz}}_pad.nii.gz && rm -f $im && "
-        "fslorient -deleteorient ${{im%%.nii.gz}}_pad.nii.gz ;"
-        "done"
+        "{params.cmd}"
 
 
 def get_manual_masks(wildcards):
@@ -159,6 +183,7 @@ rule calc_dice:
         ),
     shell:
         "{params.dice_cmd}"
+
 
 rule concat_dice:
     input:

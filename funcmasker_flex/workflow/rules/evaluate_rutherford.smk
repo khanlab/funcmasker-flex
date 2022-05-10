@@ -1,3 +1,6 @@
+# this is for evaluating the 2d unet from rutherford/fetal-code
+
+
 def get_dice_cmd(wildcards, input, output):
 
     cmd = []
