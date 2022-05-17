@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "funcmasker-flex"
 version = "0.2.0-pre.11"
-description = ""
+description = "BIDS App for U-net brain masking of fetal bold MRI"
 authors = ["Ali Khan <alik@robarts.ca>"]
 license = "MIT"
 
