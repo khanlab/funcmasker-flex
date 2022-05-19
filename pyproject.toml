@@ -17,11 +17,9 @@ pygraphviz = "^1.7"
 Pygments = "^2.10.0"
 
 [tool.poetry.dev-dependencies]
-flake8 = "^4.0.1"
 pytest-console-scripts = "^1.2.1"
 pytest = "^6.2.5"
 black = "^21.10b0"
-pylint = "^2.11.1"
 isort = "^5.10.1"
 poethepoet = "^0.10.0"
 snakefmt = "^0.4.4"
@@ -36,8 +34,8 @@ build-backend = "poetry.core.masonry.api"
 
 
 [tool.poe.tasks]
-quality_check = { shell = "isort funcmasker_flex -c && black funcmasker_flex --check && flake8 funcmasker_flex && pylint funcmasker_flex && snakefmt funcmasker_flex --check" }
-quality_fix = { shell = "isort funcmasker_flex && black funcmasker_flex && flake8 funcmasker_flex && pylint funcmasker_flex && snakefmt funcmasker_flex" }
+quality_check = { shell = "isort funcmasker_flex -c && black funcmasker_flex --check && snakefmt funcmasker_flex --check" }
+quality_fix = { shell = "isort funcmasker_flex && black funcmasker_flex && snakefmt funcmasker_flex" }
 test = "pytest"
 
 
