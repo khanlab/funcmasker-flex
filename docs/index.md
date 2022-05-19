@@ -13,12 +13,12 @@ getting_started/installation
 ```
 
 ```{toctree}
-  :caption: Usage 
-  :name: usage
-  :hidden:
-  :maxdepth: 1
+:caption: Usage 
+:name: usage
+:hidden:
+:maxdepth: 1
 
-  usage/app_cli
-  usage/snakemake_cli
+usage/app_cli
+usage/snakemake_cli
 ```
 
