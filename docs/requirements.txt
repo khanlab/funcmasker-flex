@@ -4,3 +4,4 @@ sphinx_rtd_theme
 sphinxcontrib-napoleon
 sphinxcontrib-asciinema
 myst-parser
+snakebids==0.5.1
