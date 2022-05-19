@@ -12,7 +12,6 @@ def get_parser():
     return app.parser
 
 
-
 def main():
     app = SnakeBidsApp(Path(__file__).resolve().parents[0])  # run in current folder
     app.run_snakemake()
