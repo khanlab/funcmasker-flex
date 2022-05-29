@@ -163,7 +163,7 @@ nnunet:
 
 
 singularity:
-  neuroglia: 'docker://khanlab/neuroglia-core:latest'
+  neuroglia: 'docker://khanlab/funcmasker-flex:v0.2.0'
 
 
  
