@@ -114,6 +114,7 @@ rule run_inference:
         dataaugment_threads=4,
         chkpnt=config["download_model"][model]["checkpoint"],
         unettask=config["download_model"][model]["unettask"],
+        tta="--disable-tta"
     shell:
         #create temp folders
         #cp input image to temp folder
@@ -128,7 +129,7 @@ rule run_inference:
         "export RESULTS_FOLDER={params.model_dir} && "
         "export nnUNet_n_proc_DA={resources.dataaugment_threads} && "
         "nnUNet_predict -i {params.in_folder} -o {params.out_folder} "
-        " -t {params.unettask} -chk {params.chkpnt} && "
+        " -t {params.unettask} -chk {params.chkpnt} {params.tta} && "
         "cp -v {params.out_folder}/*.nii.gz {output.nii_dir}"
 
 
