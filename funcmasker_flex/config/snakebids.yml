@@ -103,7 +103,11 @@ parse_args:
     nargs: '+'
 
  # custom command-line parameters can then be added, these will get added to the config
- # below is an example to override config['bet_frac']
+
+  --nnunet_enable_tta:
+    help: 'Enable test-time augmentation for nnU-net inference, slows down inference by 8x, but potentially increases accuracy (default: %(default)s)'
+    default: False
+    action: 'store_true'
 
 #--- workflow specific configuration -- below is just an example:
 
@@ -161,9 +165,10 @@ nnunet:
   trainer: 'nnUNetTrainerV2'
   arch: '3d_fullres'
 
+nnunet_enable_tta: False
 
 singularity:
-  neuroglia: 'docker://khanlab/neuroglia-core:latest'
+  neuroglia: 'docker://khanlab/funcmasker-flex:v0.2.0'
 
 
  
