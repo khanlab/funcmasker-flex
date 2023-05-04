@@ -1,34 +1,23 @@
-bids_dir: '.tests/bids'
-output_dir: '.tests/output'
+bids_dir: 'test_data'
+output_dir: '.'
 participant_label:
 exclude_participant_label:
 analysis_level: 'participant'
 
-del_orient: False
 
-#enable printing debug statements during parsing -- disable if generating dag visualization
-debug: False
 
-derivatives: True #will search in bids/derivatives if True; can also be path(s) to derivatives datasets
+derivatives: False #will search in bids/derivatives if True; can also be path(s) to derivatives datasets
 
 #list of analysis levels in the bids app 
 analysis_levels: &analysis_levels
  - participant
- - train
- - evaluate  
- - evaluate_rutherford
 
 #mapping from analysis_level to set of target rules or files
 targets_by_analysis_level:
   participant:
     - ''  # if '', then the first rule is run
-  train:
-    - ''
-  evaluate:
-    - ''
-  evaluate_rutherford:
-    - ''
 
+     
 #this configures the pybids grabber - create an entry for each type of input you want to grab
 # indexed by name of input
 #   dictionary for each input is passed directly to pybids get()
@@ -47,20 +36,7 @@ pybids_inputs:
       - acquisition
       - task
       - run
-  mask:
-    filters:
-      suffix: 'bold'
-      scope: 'derivatives'
-      extension: '.nii.gz'
-      datatype: 'func'
-    wildcards:
-      - subject
-      - session
-      - acquisition
-      - task
-      - run
-   
-
+  
 #configuration for the command-line parameters to make available
 # passed on the argparse add_argument()
 parse_args:
@@ -164,6 +140,8 @@ nnunet:
 
 singularity:
   neuroglia: 'docker://khanlab/neuroglia-core:latest'
-
+  fsl: 'docker://fnndsc/fsl:6.0.4-cuda9.1'
+  itksnap: 'docker://khanlab/itksnap:latest' 
+  prepdwi: 'docker://khanlab/prepdwi:latest'  
 
  
