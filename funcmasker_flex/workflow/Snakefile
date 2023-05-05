@@ -33,21 +33,19 @@ model = config["use_downloaded"]
 include: "rules/common.smk"
 
 
-
 rule all_test:
     input:
         nii=expand(
             bids(
                 root="results",
                 datatype="func",
-                desc="brain",
-                suffix="mask.nii.gz",
+                desc="brainupsampledmoco",
+                suffix="bold.nii.gz",
                 **config["input_wildcards"]["bold"]
             ),
             zip,
             **config["input_zip_lists"]["bold"]
         ),
 
+
 include: "rules/inference.smk"
-
-

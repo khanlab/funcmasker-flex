@@ -3,7 +3,7 @@ localrules:
     download_model,
 
 
-#currently generates a mask on a 4d vol:
+# currently generates a mask on a 4d vol:
 #  split
 #  conform
 #  apply_model
@@ -14,7 +14,8 @@ localrules:
 # to do:
 # 1. mask the bold scan (after splitting, before conforming) - done
 # 2. perform moco - done
-# 
+#
+
 
 rule download_model:
     params:
@@ -44,12 +45,12 @@ rule import_bold:
         config["input_path"]["bold"],
     output:
         bids(
-                    root="results",
-                    datatype="func",
-                    desc="raw",
-                    suffix="bold",
-                    **config["input_wildcards"]["bold"]
-            )
+            root="results",
+            datatype="func",
+            desc="raw",
+            suffix="bold.nii.gz",
+            **config["input_wildcards"]["bold"]
+        ),
     container:
         config["singularity"]["fsl"]
     group:
@@ -57,16 +58,16 @@ rule import_bold:
     shell:
         "cp {input} {output}"
 
+
 rule split_bold:
     input:
         bids(
-                    root="results",
-                    datatype="func",
-                    desc="{desc}",
-                    suffix="bold.nii.gz",
-                    **config["input_wildcards"]["bold"]
-                )
-
+            root="results",
+            datatype="func",
+            desc="{desc}",
+            suffix="bold.nii.gz",
+            **config["input_wildcards"]["bold"]
+        ),
     output:
         split_dir=temp(
             directory(
@@ -90,13 +91,12 @@ rule split_bold:
 rule conform:
     input:
         bids(
-                    root="results",
-                    datatype="func",
-                    desc="raw",
-                    suffix="bold",
-                    **config["input_wildcards"]["bold"]
-                )
-
+            root="results",
+            datatype="func",
+            desc="raw",
+            suffix="bold",
+            **config["input_wildcards"]["bold"]
+        ),
     params:
         resample_mm="3.5x3.5x3.5mm",
         pad_to="96x96x37",
@@ -221,10 +221,9 @@ rule unconform_mask:
         "reg_resample -NN 0 -ref {input.ref} -flo {input.mask} -res {output.mask}"
 
 
-
 rule split_mask:
     input:
-        mask_4d=rules.unconform_mask.output.mask
+        mask_4d=rules.unconform_mask.output.mask,
     output:
         split_dir=temp(
             directory(
@@ -245,9 +244,7 @@ rule split_mask:
         "mkdir -p {output} && fslsplit {input}  {output}/vol_ "
 
 
-
-    
-rule apply_mask_to_bold: 
+rule apply_mask_to_bold:
     input:
         bold_dir=bids(
             root="results",
@@ -258,18 +255,22 @@ rule apply_mask_to_bold:
         ),
         mask_dir=rules.split_mask.output.split_dir,
     output:
-        bold_dir=temp(directory(bids(
-            root="results",
-            datatype="func",
-            desc="brain",
-            suffix="bold",
-            **config["input_wildcards"]["bold"]
-        ))),
+        bold_dir=temp(
+            directory(
+                bids(
+                    root="results",
+                    datatype="func",
+                    desc="brain",
+                    suffix="bold",
+                    **config["input_wildcards"]["bold"]
+                )
+            )
+        ),
     container:
         config["singularity"]["itksnap"]
     group:
         "subj"
-    shell: 
+    shell:
         "mkdir -p {output} && "
         "for in_bold in `ls {input.bold_dir}/*.nii.gz`; do "
         " filename=${{in_bold##*/}} && "
@@ -279,7 +280,63 @@ rule apply_mask_to_bold:
         " c3d $in_bold $in_mask -multiply -o $out_nii;"
         "done"
 
+
+ruleorder: upsample_bold > merge_bold
+
+
+rule upsample_bold:
+    input:
+        bids(
+            root="results",
+            datatype="func",
+            desc="{desc}",
+            suffix="bold.nii.gz",
+            **config["input_wildcards"]["bold"]
+        ),
+    output:
+        upsample=bids(
+            root="results",
+            datatype="func",
+            desc="{desc,brain}upsampled",
+            suffix="bold.nii.gz",
+            **config["input_wildcards"]["bold"]
+        ),
+    container:
+        config["singularity"]["itksnap"]
+    group:
+        "subj"
+    shell:
+        "c4d {input} -resample 200% {output}"
+
+
+rule upsample_mask:
+    input:
+        bids(
+            root="results",
+            datatype="func",
+            desc="{desc}",
+            suffix="mask.nii.gz",
+            **config["input_wildcards"]["bold"]
+        ),
+    output:
+        bids(
+            root="results",
+            datatype="func",
+            desc="{desc}upsampled",
+            suffix="mask.nii.gz",
+            **config["input_wildcards"]["bold"]
+        ),
+    container:
+        config["singularity"]["itksnap"]
+    group:
+        "subj"
+    shell:
+        "c4d -interpolation NearestNeighbor {input} -resample 200% {output}"
+
+
 ruleorder: moco_bold > split_bold
+
+
 rule moco_bold:
     input:
         bold_dir=bids(
@@ -290,20 +347,24 @@ rule moco_bold:
             **config["input_wildcards"]["bold"]
         ),
     output:
-        bold_dir=directory(bids(
-            root="results",
-            datatype="func",
-            desc="{desc}moco",
-            suffix="bold",
-            **config["input_wildcards"]["bold"]
-        )),
-        affine_dir=directory(bids(
-            root="results",
-            datatype="func",
-            desc="{desc}moco",
-            suffix="xfm",
-            **config["input_wildcards"]["bold"]
-        )),
+        bold_dir=directory(
+            bids(
+                root="results",
+                datatype="func",
+                desc="{desc}moco",
+                suffix="bold",
+                **config["input_wildcards"]["bold"]
+            )
+        ),
+        affine_dir=directory(
+            bids(
+                root="results",
+                datatype="func",
+                desc="{desc}moco",
+                suffix="xfm",
+                **config["input_wildcards"]["bold"]
+            )
+        ),
     threads: 32
     resources:
         mem_mb=32000,
@@ -320,6 +381,7 @@ rule moco_bold:
         " ::: `ls {input.bold_dir}/vol_????.nii.gz | tail -n +2 | grep -Po '(?<=vol_)[0-9]+'` && "
         " echo -e '1 0 0 0\n0 1 0 0\n0 0 1 0\n0 0 0 1' > {output.affine_dir}/affine_xfm_ras_000.txt "
 
+
 rule merge_bold:
     input:
         bold_dir=bids(
@@ -328,65 +390,18 @@ rule merge_bold:
             desc="{desc}",
             suffix="bold",
             **config["input_wildcards"]["bold"]
-        )
-
+        ),
     output:
         nii=bids(
-                root="results",
-                datatype="func",
-                desc="{desc}",
-                suffix="bold.nii.gz",
-                **config["input_wildcards"]["bold"]
-            )
+            root="results",
+            datatype="func",
+            desc="{desc}",
+            suffix="bold.nii.gz",
+            **config["input_wildcards"]["bold"]
+        ),
     group:
         "subj"
     container:
         config["singularity"]["fsl"]
     shell:
         "fslmerge -t {output} {input}/*.nii.gz"
-
-ruleorder: upsample_bold > merge_bold
- 
-rule upsample_bold:
-    input:
-        config["input_path"]["bold"],
-    output:
-        upsample=bids(
-                    root="results",
-                    datatype="func",
-                    desc="{desc}upsampled",
-                    suffix="bold.nii.gz",
-                    **config["input_wildcards"]["bold"]
-                )
-    container:
-        config["singularity"]["itksnap"]
-    group:
-        "subj"
-    shell:
-        "c4d {input} -resample 200% {output}"
-
-rule upsample_mask:
-    input:
-        bids(
-                    root="results",
-                    datatype="func",
-                    desc="{desc}",
-                    suffix="mask.nii.gz",
-                    **config["input_wildcards"]["bold"]
-                )
-    output:
-        bids(
-                    root="results",
-                    datatype="func",
-                    desc="{desc}upsampled",
-                    suffix="mask.nii.gz",
-                    **config["input_wildcards"]["bold"]
-               )
-    container:
-        config["singularity"]["itksnap"]
-    group:
-        "subj"
-    shell:
-        "c4d -interpolation NearestNeighbor {input} -resample 200% {output}"
-
-
